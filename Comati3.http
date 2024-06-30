@@ -1,0 +1,6 @@
+@Comati3_HostAddress = http://localhost:5209
+
+GET {{Comati3_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
