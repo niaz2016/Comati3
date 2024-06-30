@@ -1,51 +1,56 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using MySql.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
 namespace Comati3.Migrations
 {
     /// <inheritdoc />
-    public partial class renew1 : Migration
+    public partial class redo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("MySQL:Charset", "utf8mb4");
+
             migrationBuilder.CreateTable(
                 name: "Persons",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Phone = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Remarks = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false),
+                    Phone = table.Column<string>(type: "longtext", nullable: true),
+                    Address = table.Column<string>(type: "longtext", nullable: true),
+                    Remarks = table.Column<string>(type: "longtext", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Persons", x => x.Id);
-                });
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Comaties",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Start_Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    End_Date = table.Column<DateTime>(type: "datetime2", nullable: true),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: false),
+                    Start_Date = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    End_Date = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     Per_Head = table.Column<int>(type: "int", nullable: false),
                     ManagerId = table.Column<int>(type: "int", nullable: true),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -55,22 +60,23 @@ namespace Comati3.Migrations
                         column: x => x.ManagerId,
                         principalTable: "Persons",
                         principalColumn: "Id");
-                });
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "ComatiPayments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     ComatiId = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    PaymentDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,20 +93,22 @@ namespace Comati3.Migrations
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
                 name: "Members",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     ComatiId = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                    Amount = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -117,7 +125,8 @@ namespace Comati3.Migrations
                         principalTable: "Persons",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Comaties_ManagerId",
