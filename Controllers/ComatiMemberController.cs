@@ -1,7 +1,6 @@
 ﻿using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Comati3.DTOs;
-using Comati3.Migrations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

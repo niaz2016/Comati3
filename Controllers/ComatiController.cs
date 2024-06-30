@@ -1,6 +1,7 @@
 ﻿using Comati3.DTOs;
 using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -33,18 +34,23 @@ namespace Comati3.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/<ComatiController>/5
+        // GET api/<ComatiController>/ id is comati id.
         [HttpGet("{id}")]
-        public ComatiPostDTO Get(int id)
+        public IActionResult Get(int id)
         {
-           ComatiPostDTO c= _comatiContext.Comaties.Where(comati => comati.Id == id).Select(comati => new ComatiPostDTO
+            var c = _comatiContext.Comaties.Include(y=>y.Members).Where(comati => comati.Id == id).Select(comati => new
             {
+
                 Name = comati.Name,
                 ManagerId = comati.ManagerId,
                 Per_Head = comati.Per_Head,
                 Start_Date = comati.Start_Date,
+                End_Date = comati.End_Date,
+                totalMembers = comati.Members.Count(),
+                totalCommati= comati.Members.Sum(member=>member.Amount)
+
             }).First();
-            return c;
+            return Ok(c);
         }
 
         /*// PUT api/<ComatiController>/5
