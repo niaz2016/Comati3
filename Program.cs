@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Comati3
 {
+
     public class Program
     {
         public static void Main(string[] args)
@@ -19,7 +20,7 @@ namespace Comati3
 
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ComatiContext>(item =>
-            item.UseSqlServer("Data Source=localhost; Initial Catalog=Comati; User Id=root; Password=5540; TrustServerCertificate=True"));
+            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
 
             var app = builder.Build();
 
