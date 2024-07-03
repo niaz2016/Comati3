@@ -28,16 +28,13 @@ namespace Comati3.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<DateTime?>("End_Date")
-                        .HasColumnType("datetime(6)");
-
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<int?>("ManagerId")
+                    b.Property<int>("ManagerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("ModifiedAt")
@@ -49,6 +46,9 @@ namespace Comati3.Migrations
 
                     b.Property<int>("Per_Head")
                         .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("Start_Date")
                         .HasColumnType("datetime(6)");
@@ -66,7 +66,7 @@ namespace Comati3.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int?>("Amount")
+                    b.Property<int>("Amount")
                         .HasColumnType("int");
 
                     b.Property<int>("ComatiId")
@@ -84,8 +84,18 @@ namespace Comati3.Migrations
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime>("OpeningMonth")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -117,20 +127,23 @@ namespace Comati3.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int>("MemberId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("PersonId")
-                        .HasColumnType("int");
+                    b.Property<string>("Remarks")
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ComatiId");
 
-                    b.HasIndex("PersonId");
+                    b.HasIndex("MemberId");
 
                     b.ToTable("ComatiPayments");
                 });
@@ -175,7 +188,9 @@ namespace Comati3.Migrations
                 {
                     b.HasOne("Comati3.Models.Person", "Manager")
                         .WithMany("ComatisManaged")
-                        .HasForeignKey("ManagerId");
+                        .HasForeignKey("ManagerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Manager");
                 });
@@ -207,15 +222,15 @@ namespace Comati3.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Comati3.Models.Person", "Person")
+                    b.HasOne("Comati3.Models.ComatiMember", "ComatiMember")
                         .WithMany("ComatiPayments")
-                        .HasForeignKey("PersonId")
+                        .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Comati");
 
-                    b.Navigation("Person");
+                    b.Navigation("ComatiMember");
                 });
 
             modelBuilder.Entity("Comati3.Models.Comati", b =>
@@ -225,11 +240,14 @@ namespace Comati3.Migrations
                     b.Navigation("Payments");
                 });
 
+            modelBuilder.Entity("Comati3.Models.ComatiMember", b =>
+                {
+                    b.Navigation("ComatiPayments");
+                });
+
             modelBuilder.Entity("Comati3.Models.Person", b =>
                 {
                     b.Navigation("ComatiMemberships");
-
-                    b.Navigation("ComatiPayments");
 
                     b.Navigation("ComatisManaged");
                 });

@@ -16,50 +16,32 @@ namespace Comati3.Controllers
         }
         // POST api/<PersonController>
         [HttpPost]
-        public string Post([FromBody] ComatiPaymentPostDTO comatiPayment)
+        public ComatiPayment Post([FromBody] ComatiPaymentPostDTO comatiPayment)
         {
             ComatiPayment CP= comatiPayment.ToModel<ComatiPayment>();
             _comatiContext.ComatiPayments.Add(CP);
             _comatiContext.SaveChanges();
-            var paidFor = _comatiContext.ComatiPayments.Where(ComatiPayment => ComatiPayment.Id == CP.Id).Select(cp => new 
-            {
-                cp.Amount,
-                cp.Person.Name,
-            }).First();
-            return $"Comati Paid Successfully for {paidFor.Name} amound received {paidFor.Amount}";
+            
+            return CP;
         }
-        // GET: api/<ComatiPaymentController>
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
+        
 
         // GET api/<ComatiPaymentController>/5
-        [HttpGet("{id}")]
-        public ComatiPaymentPostDTO Get(int id)
+        [HttpGet]
+        public ComatiPaymentGetDTO Get(int comatiId, int memberId)
         {
-            ComatiPaymentPostDTO cp = _comatiContext.ComatiPayments.Where(comatiPayment => comatiPayment.Id == id).Select(comatiPayment => new ComatiPaymentPostDTO
-            {
+            ComatiPaymentGetDTO cp = _comatiContext.ComatiPayments
+                .Where(comatiPayment => comatiPayment.ComatiId == comatiId && comatiPayment.MemberId == memberId)
+                .Select(comatiPayment => new ComatiPaymentGetDTO
+        {
                 Amount= comatiPayment.Amount,
-                ComatiId= comatiPayment.Id,
-                MemberId= comatiPayment.Id,
+                ComatiId = comatiPayment.ComatiId,
+                MemberId = comatiPayment.MemberId,
                 PaymentDate= comatiPayment.PaymentDate,
+                Remarks= comatiPayment.Remarks,
             }).First();
             return cp;
         }
 
-        /*// PUT api/<ComatiPaymentController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }*/
-
-        // DELETE api/<ComatiPaymentController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            _comatiContext.ComatiPayments.Find(id).IsDeleted = true;
-        }
     }
 }

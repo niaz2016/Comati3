@@ -35,9 +35,9 @@ namespace Comati3.Models
                 .HasForeignKey(p => p.ComatiId);
 
             modelBuilder.Entity<ComatiPayment>()
-                .HasOne(p => p.Person)
+                .HasOne(p => p.ComatiMember)
                 .WithMany(per => per.ComatiPayments)
-                .HasForeignKey(p => p.PersonId);
+                .HasForeignKey(p => p.MemberId);
         }
 
     }

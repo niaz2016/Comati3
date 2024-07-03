@@ -21,7 +21,16 @@ namespace Comati3
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ComatiContext>(item =>
             item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
-
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader()
+                           ;
+                });
+            });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -34,9 +43,10 @@ namespace Comati3
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
+            app.UseCors("AllowAll");
 
             app.MapControllers();
+            
 
             app.Run();
         }

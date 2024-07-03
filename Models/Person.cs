@@ -10,8 +10,7 @@ namespace Comati3.Models
         public string? Remarks { get; set; }
 
         public ICollection<Comati>? ComatisManaged { get; set; }
-        public ICollection<ComatiMember>? ComatiMemberships { get; set; }
-        public ICollection<ComatiPayment>? ComatiPayments { get; set; }
+        public ICollection<ComatiMember> ComatiMemberships { get; set; }=null!;
 
 
     }

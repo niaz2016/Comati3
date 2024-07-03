@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
-
-using Microsoft.EntityFrameworkCore;
 using Comati3.DTOs;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -20,21 +18,25 @@ namespace Comati3.Controllers
         }
         // POST api/<PersonController>
         [HttpPost]
-        public string Post([FromBody] PersonPostDTO person)
+        public IActionResult Post([FromBody] PersonPostDTO person)
         {
             
             Person p = person.ToModel<Person>();
             _comatiContext.Persons.Add(p);
             _comatiContext.SaveChanges();
 
-            return "Person Added Successfully";
+            return Ok(p);
         }
         // GET: api/<PersonController>
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<PersonsGetDTO> GetPersons()
         {
-            
-            return new string[] { "value1", "value2" };
+            IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Select(person => new PersonsGetDTO
+            {
+                Id = person.Id,
+                Name = person.Name
+            });
+            return p;
         }
 
         // GET api/<PersonController>/5
@@ -49,12 +51,6 @@ namespace Comati3.Controllers
                 Remarks = person.Remarks
             }).First();
             return p;
-        }
-
-        // PUT api/<PersonController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
         }
 
         // DELETE api/<PersonController>/5

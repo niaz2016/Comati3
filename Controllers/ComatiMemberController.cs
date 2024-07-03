@@ -1,6 +1,7 @@
 ﻿using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Comati3.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -19,47 +20,45 @@ namespace Comati3.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ComatiMemberPostDTO comatiMember)
         {
-            
+
             ComatiMember cm = comatiMember.ToModel<ComatiMember>();
             _comatiContext.Members.Add(cm);
             _comatiContext.SaveChanges();
 
-            return Ok("Comati Member Added");
+            return Ok(cm);
         }
-        // GET: api/<ComatiMemberController>
-        //[HttpGet]
-        /*public IEnumerable<string> Get()
+        // GET: api/<ComatiMemberGetDTOController>
+        [HttpGet]
+        public IEnumerable<ComatiMemberGetDTO> GetMember(int comatiId)
         {
-            return new string[] { "value1", "value2" };
+            IEnumerable<ComatiMemberGetDTO> comatiMembers = _comatiContext.Members
+                .Where(member => member.ComatiId == comatiId)
+                .Select(member => new ComatiMemberGetDTO
+                {
+                    ComatiId = member.ComatiId,
+                    Name= member.Name,
+                    OpeningMonth = member.OpeningMonth,
+                    Amount = member.Amount,
+                    Remarks = member.Remarks,
+                })
+                .ToList();
+
+            return comatiMembers;
         }
-*/
-        // GET api/<ComatiMemberController>/5
-        
-        [HttpGet("{id}")]
-        public ComatiMemberPostDTO Get(int id)
+        [HttpGet("mmid")]
+        public async Task<ActionResult<int>> GetMaxMemberShipId(int comatiId)
         {
-            ComatiMemberPostDTO cp = _comatiContext.Members.Where(comatiMember => comatiMember.Id == id).Select(comatiMember => new ComatiMemberPostDTO
+            var maxMemberShipId = await _comatiContext.Members
+                .Where(m => m.ComatiId == comatiId)
+                .Select(m => m.Id).MaxAsync();
+
+            return Ok(maxMemberShipId);
+            // DELETE api/<ComatiMemberController>/5
+            [HttpDelete("{id}")]
+            void Delete(int id)
             {
-                ComatiId = comatiMember.ComatiId,
-                PersonId = comatiMember.PersonId,
-                Amount = comatiMember.Amount,
-                
-        }).First();
-            
-            return cp;
-        }
-
-        /*// PUT api/<ComatiMemberController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }*/
-
-        // DELETE api/<ComatiMemberController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-            _comatiContext.Members.Find(id).IsDeleted= true;
+                _comatiContext.Members.Find(id).IsDeleted = true;
+            }
         }
     }
 }
