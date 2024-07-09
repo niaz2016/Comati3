@@ -36,7 +36,7 @@ namespace Comati3.Controllers
                 .Select(member => new ComatiMemberGetDTO
                 {
                     ComatiId = member.ComatiId,
-                    Name= member.Name,
+                    Name= member.Person.Name,
                     OpeningMonth = member.OpeningMonth,
                     Amount = member.Amount,
                     Remarks = member.Remarks,

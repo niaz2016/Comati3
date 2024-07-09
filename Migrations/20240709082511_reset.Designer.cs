@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comati3.Migrations
 {
     [DbContext(typeof(ComatiContext))]
-    [Migration("20240703150749_membersettings")]
-    partial class membersettings
+    [Migration("20240709082511_reset")]
+    partial class reset
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,10 +86,6 @@ namespace Comati3.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("OpeningMonth")
                         .HasColumnType("datetime(6)");

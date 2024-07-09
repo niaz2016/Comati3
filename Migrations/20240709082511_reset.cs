@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Comati3.Migrations
 {
     /// <inheritdoc />
-    public partial class membersettings : Migration
+    public partial class reset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -72,7 +72,6 @@ namespace Comati3.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     ComatiId = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     OpeningMonth = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Remarks = table.Column<string>(type: "longtext", nullable: true),

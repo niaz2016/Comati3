@@ -11,7 +11,6 @@ namespace Comati3.Models
         [ForeignKey("PersonId")]
         public int PersonId { get; set; }
         public Person Person { get; set; } = null!;
-        public string Name { get; set; }=null!;
         public int Amount {  get; set; }
         public DateTime OpeningMonth { get; set; }
         public string? Remarks { get; set; }
