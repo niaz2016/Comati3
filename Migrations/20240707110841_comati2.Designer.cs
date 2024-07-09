@@ -3,6 +3,7 @@ using System;
 using Comati3.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,16 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comati3.Migrations
 {
     [DbContext(typeof(ComatiContext))]
-    partial class ComatiContextModelSnapshot : ModelSnapshot
+<<<<<<<< HEAD:Migrations/20240709082511_reset.Designer.cs
+    [Migration("20240709082511_reset")]
+    partial class reset
+========
+    [Migration("20240707110841_comati2")]
+    partial class comati2
+>>>>>>>> 6bb84e118aac3076d08f19d2f3b812f8f2975948:Migrations/20240707110841_comati2.Designer.cs
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,6 +78,9 @@ namespace Comati3.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ComatiId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ComatiMemberNo")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -170,6 +181,7 @@ namespace Comati3.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Remarks")
