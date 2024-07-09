@@ -3,12 +3,13 @@ using Comati3.Models;
 using Comati3.DTOs;
 using ZstdSharp;
 using Mysqlx;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Comati3.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class PersonController : ControllerBase
@@ -22,7 +23,7 @@ namespace Comati3.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] PersonPostDTO person)
         {
-            
+
             Person p = person.ToModel<Person>();
             _comatiContext.Persons.Add(p);
             _comatiContext.SaveChanges();
@@ -37,10 +38,10 @@ namespace Comati3.Controllers
             {
                 Id = person.Id,
                 Name = person.Name,
-                Phone= person.Phone,
-                Address= person.Address,
-                Remarks= person.Remarks,
-                
+                Phone = person.Phone,
+                Address = person.Address,
+                Remarks = person.Remarks,
+
             });
             return p;
         }
@@ -71,12 +72,13 @@ namespace Comati3.Controllers
             }
         }
 
-        // DELETE api/<PersonController>/5
+            // DELETE api/<PersonController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        void Delete(int id)
         {
-            _comatiContext.Persons.Find(id).IsDeleted= true;
+            _comatiContext.Persons.Find(id).IsDeleted = true;
             _comatiContext.SaveChanges();
         }
+        
     }
 }
