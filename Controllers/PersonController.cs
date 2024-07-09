@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
 using Comati3.DTOs;
-using ZstdSharp;
-using Mysqlx;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,7 +29,6 @@ namespace Comati3.Controllers
             return Ok(p);
         }
         // GET: api/<PersonController>
-        [HttpGet]
         public IEnumerable<PersonsGetDTO> GetPersons()
         {
             IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Select(person => new PersonsGetDTO
@@ -44,6 +42,31 @@ namespace Comati3.Controllers
             });
             return p;
         }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Update(int id, PersonPostDTO person)
+        {
+            try
+            {
+                _comatiContext.Set<Person>().Where(m => m.Id == id).ExecuteUpdateAsync(updates => updates
+                .SetProperty(p => p.Name, person.Name)
+                .SetProperty(p => p.Phone, person.Phone)
+                .SetProperty(p => p.Address, person.Address)
+                .SetProperty(p => p.Remarks, person.Remarks)
+                );
+                _comatiContext.SaveChanges();
+                return (IActionResult)Results.NoContent();
+                
+            }
+            catch
+            {
+                return (IActionResult)Results.NoContent();
+            }
+            
+        }
+
+        [HttpGet]
+
 
         // GET api/<PersonController>/5
         [HttpGet("personId")]
@@ -51,23 +74,17 @@ namespace Comati3.Controllers
         { if (id == 0) { return null; }
             else
             {
-                PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
+                if (_comatiContext.Persons != null)
                 {
-                    Name = person.Name,
-                    Address = person.Address,
-                    Phone = person.Phone,
-                    Remarks = person.Remarks,
-                    /*MemberShips = person.ComatiMemberships.Select(m=> new ComatiMemberGetDTO
+                    PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
                     {
-                        ComatiName = m.Comati.Name,
-                        ComatiMemberNo = m.Id,
-                        Amount = m.Amount,
-                        OpeningMonth = m.OpeningMonth,
-                        Remarks = m.Remarks,
-                    }
-                    ).ToList(),*/
-                }).First();
-                return p;
+                        Name = person.Name,
+                        Address = person.Address,
+                        Phone = person.Phone,
+                        Remarks = person.Remarks,
+                    }).First();
+                    return p;
+                } return null;
             }
         }
 
