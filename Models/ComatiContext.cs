@@ -9,10 +9,10 @@ namespace Comati3.Models
         {
            
          }
-        public DbSet<Person> Persons { get; set; }
-        public DbSet<Comati> Comaties { get; set; }
-        public DbSet<ComatiMember> Members { get; set; }
-        public DbSet<ComatiPayment> ComatiPayments { get; set; }
+        public DbSet<Person>? Persons { get; set; }
+        public DbSet<Comati>? Comaties { get; set; }
+        public DbSet<ComatiMember>? Members { get; set; }
+        public DbSet<ComatiPayment>? ComatiPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -38,6 +38,10 @@ namespace Comati3.Models
                 .HasOne(p => p.ComatiMember)
                 .WithMany(per => per.ComatiPayments)
                 .HasForeignKey(p => p.MemberId);
+            modelBuilder.Entity<Comati>()
+                .HasOne(p => p.Manager)
+                .WithMany(m => m.ComatisManaged)
+                .HasForeignKey(p => p.ManagerId);
         }
 
     }

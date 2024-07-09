@@ -72,6 +72,9 @@ namespace Comati3.Migrations
                     b.Property<int>("ComatiId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ComatiMemberNo")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -83,10 +86,6 @@ namespace Comati3.Migrations
 
                     b.Property<DateTime>("ModifiedAt")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
 
                     b.Property<DateTime>("OpeningMonth")
                         .HasColumnType("datetime(6)");
@@ -174,6 +173,7 @@ namespace Comati3.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Remarks")

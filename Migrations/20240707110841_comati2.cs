@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Comati3.Migrations
 {
     /// <inheritdoc />
-    public partial class membersettings : Migration
+    public partial class comati2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,7 +22,7 @@ namespace Comati3.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false),
-                    Phone = table.Column<string>(type: "longtext", nullable: true),
+                    Phone = table.Column<string>(type: "longtext", nullable: false),
                     Address = table.Column<string>(type: "longtext", nullable: true),
                     Remarks = table.Column<string>(type: "longtext", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -71,8 +71,8 @@ namespace Comati3.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     ComatiId = table.Column<int>(type: "int", nullable: false),
+                    ComatiMemberNo = table.Column<int>(type: "int", nullable: false),
                     PersonId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false),
                     OpeningMonth = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     Remarks = table.Column<string>(type: "longtext", nullable: true),

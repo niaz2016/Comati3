@@ -16,31 +16,41 @@ namespace Comati3.Controllers
         }
         // POST api/<PersonController>
         [HttpPost]
-        public ComatiPayment Post([FromBody] ComatiPaymentPostDTO comatiPayment)
+        public IActionResult Post([FromBody] ComatiPaymentPostDTO comatiPayment)
         {
-            ComatiPayment CP= comatiPayment.ToModel<ComatiPayment>();
-            _comatiContext.ComatiPayments.Add(CP);
+
+            ComatiPayment cm = comatiPayment.ToModel<ComatiPayment>();
+            _comatiContext.ComatiPayments.Add(cm);
             _comatiContext.SaveChanges();
-            
-            return CP;
+
+            return Ok(cm);
         }
-        
+        [HttpGet("ComatiId")]
+        public int GetcollectedAmount(int comatiId)
+        {
+            int total = _comatiContext.ComatiPayments.Where(cp => cp.ComatiId == comatiId).Select(cp=>cp.Amount).Sum();
+            return total;
+        }
+        [HttpGet("memberPayments")]
+        public IEnumerable<PaymentGetDTO> MemberPayments(int memberId, int comatiId)
+        {
+            IEnumerable<PaymentGetDTO> payments = _comatiContext.ComatiPayments.Where(c => c.ComatiId == comatiId && c.MemberId == memberId).Select(c => new PaymentGetDTO
+            {
+                PaymentDate = c.PaymentDate,
+                Amount = c.Amount,
+                Remarks =c.Remarks,
+            }).ToList();
+            return payments;
+        }
 
         // GET api/<ComatiPaymentController>/5
         [HttpGet]
-        public ComatiPaymentGetDTO Get(int comatiId, int memberId)
+        public string GetPaymentStatus(DateOnly date, int comatiId)
         {
-            ComatiPaymentGetDTO cp = _comatiContext.ComatiPayments
-                .Where(comatiPayment => comatiPayment.ComatiId == comatiId && comatiPayment.MemberId == memberId)
-                .Select(comatiPayment => new ComatiPaymentGetDTO
-        {
-                Amount= comatiPayment.Amount,
-                ComatiId = comatiPayment.ComatiId,
-                MemberId = comatiPayment.MemberId,
-                PaymentDate= comatiPayment.PaymentDate,
-                Remarks= comatiPayment.Remarks,
-            }).First();
-            return cp;
+            //PaymentGetDTO payStatus= _comatiContext.ComatiPayments.
+            
+
+                return  "Method not implemented";
         }
 
     }
