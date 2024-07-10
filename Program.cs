@@ -20,7 +20,7 @@ namespace Comati3
 
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ComatiContext>(item =>
-            item.UseMySQL("Server=localhost;Database=Comati2;Uid=root;password=5540321965;"));
+            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>

@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Comati3.Migrations
 {
     /// <inheritdoc />
-    public partial class comati2 : Migration
+    public partial class reset : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
 using Comati3.DTOs;
-using Microsoft.EntityFrameworkCore.Update;
-using ZstdSharp;
-using Mysqlx;
+using Microsoft.EntityFrameworkCore;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -46,7 +44,6 @@ namespace Comati3.Controllers
 
         } 
         // GET: api/<PersonController>
-        [HttpGet]
         public IEnumerable<PersonsGetDTO> GetPersons()
         {
             IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Select(person => new PersonsGetDTO
@@ -72,23 +69,17 @@ namespace Comati3.Controllers
         { if (id == 0) { return null; }
             else
             {
-                PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
-                {   
-                    Name = person.Name,
-                    Address = person.Address,
-                    Phone = person.Phone,
-                    Remarks = person.Remarks,
-                    /*MemberShips = person.ComatiMemberships.Select(m=> new ComatiMemberGetDTO
+                if (_comatiContext.Persons != null)
+                {
+                    PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
                     {
-                        ComatiName = m.Comati.Name,
-                        ComatiMemberNo = m.Id,
-                        Amount = m.Amount,
-                        OpeningMonth = m.OpeningMonth,
-                        Remarks = m.Remarks,
-                    }
-                    ).ToList(),*/
-                }).First();
-                return p;
+                        Name = person.Name,
+                        Address = person.Address,
+                        Phone = person.Phone,
+                        Remarks = person.Remarks,
+                    }).First();
+                    return p;
+                } return null;
             }
         }
 
