@@ -23,8 +23,8 @@ namespace Comati3.Controllers
         {
             return AddOrUpdatePerson(person);
 
-
         }
+        [HttpPost]
         private IActionResult AddOrUpdatePerson(PersonPostDTO person)
         {
             if (person.Id == null || person.Id==0)
@@ -42,8 +42,9 @@ namespace Comati3.Controllers
                 return Ok(p);
             }
 
-        } 
+        }
         // GET: api/<PersonController>
+        [HttpGet]
         public IEnumerable<PersonsGetDTO> GetPersons()
         {
             IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Select(person => new PersonsGetDTO
@@ -65,30 +66,33 @@ namespace Comati3.Controllers
 
         // GET api/<PersonController>/5
         [HttpGet("personId")]
-        public PersonPostDTO Get(int id)
-        { if (id == 0) { return null; }
-            else
+        public PersonPostDTO GetPersons(int id)
+        { 
             {
                 if (_comatiContext.Persons != null)
                 {
-                    PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
+                    PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id && person.IsDeleted == false).Select(person => new PersonPostDTO
                     {
                         Name = person.Name,
                         Address = person.Address,
                         Phone = person.Phone,
                         Remarks = person.Remarks,
                     }).First();
+                    
                     return p;
-                } return null;
+                } 
+                
+                return null;
             }
         }
 
         // DELETE api/<PersonController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
+        [HttpDelete]
+         public IActionResult Delete(int id)
         {
             _comatiContext.Persons.Find(id).IsDeleted= true;
             _comatiContext.SaveChanges();
+            return Ok("Delete Success");
         }
     }
 }

@@ -29,9 +29,11 @@ namespace Comati3.Controllers
                 lastMemberNo = lastQuer.Last().ComatiMemberNo;
             }
             ComatiMember cm = comatiMember.ToModel<ComatiMember>();
-            cm.ComatiMemberNo = lastMemberNo+1;
-            _comatiContext.Members.Add(cm);
-            _comatiContext.SaveChanges();
+            if (comatiMember.Id == null || comatiMember.Id == 0) {
+                cm.ComatiMemberNo = lastMemberNo + 1; 
+                _comatiContext.Members.Add(cm);
+                _comatiContext.SaveChanges(); }
+            else { _comatiContext.Members.Update(cm); _comatiContext.SaveChanges(); }
 
             return Ok(cm);
         }
@@ -43,8 +45,8 @@ namespace Comati3.Controllers
                 .Where(member => member.ComatiId == comatiId)
                 .Select(member => new ComatiMemberGetDTO
                 {
-                    Id=member.Id,
-                    ComatiName = _comatiContext.Comaties.Where(c=>c.Id== comatiId).Select(comati=>comati.Name).First(),
+                    Id = member.Id,
+                    ComatiName = member.Comati.Name,
                     ComatiMemberNo = member.ComatiMemberNo,
                     Name = member.Person.Name,
                     OpeningMonth = member.OpeningMonth,
@@ -57,6 +59,7 @@ namespace Comati3.Controllers
         }
         [HttpGet("memberId")]
         public ComatiMemberGetDTO GetMember(int memberId) {
+
             ComatiMemberGetDTO member = _comatiContext.Members.Where(m => m.Id == memberId).Select(cm => new ComatiMemberGetDTO
             {
                 ComatiName = cm.Comati.Name,
@@ -68,10 +71,12 @@ namespace Comati3.Controllers
             return member;
         }
         // DELETE api/<ComatiMemberController>/5
-        [HttpDelete("{id}")]
-            void Delete(int id)
+        [HttpDelete]
+            public IActionResult Delete(int id)
             {
                 _comatiContext.Members.Find(id).IsDeleted = true;
+            _comatiContext.SaveChanges();
+            return Ok("Delete Success");
             }
     }
 }

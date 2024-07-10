@@ -21,7 +21,8 @@ namespace Comati3.Controllers
         public IActionResult Post([FromBody] ComatiPostDTO comati)
         {
             Comati c = comati.ToModel<Comati>();
-            _comatiContext.Comaties.Add(c);
+            if (comati.Id == null || comati.Id == 0) { _comatiContext.Comaties.Add(c); }
+            else { _comatiContext.Comaties.Update(c); }
             _comatiContext.SaveChanges();
 
             return Ok(c);
@@ -30,7 +31,7 @@ namespace Comati3.Controllers
         [HttpGet]
         public IEnumerable<ComatiGetDTO> ComatiesByMgrId(int MgrId)
         {
-            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Where(comati => comati.ManagerId == MgrId).Select(comati => new ComatiGetDTO
+            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Where(comati => comati.ManagerId == MgrId && comati.IsDeleted==false).Select(comati => new ComatiGetDTO
             {
                 Id = comati.Id,
                 ManagerId = comati.ManagerId,
@@ -61,6 +62,7 @@ namespace Comati3.Controllers
         [HttpGet("comati")]
         public ComatiGetDTO GetComati(int comatiId)
         {
+
             ComatiGetDTO comati = _comatiContext.Comaties.Where(c => c.Id == comatiId).Select(c => new ComatiGetDTO
             {
                 Id = c.Id,
@@ -89,23 +91,23 @@ namespace Comati3.Controllers
 
         // DELETE api/<ComatiController>/5
         [HttpDelete("delete")]
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int comatiId)
         {
             if (_comatiContext.Comaties == null)
             {
                 return NotFound("Comaties collection is null.");
             }
 
-            var comati = _comatiContext.Comaties.Find(id);
+            var comati = _comatiContext.Comaties.Find(comatiId);
             if (comati == null)
             {
-                return NotFound($"Comati with id {id} not found.");
+                return NotFound($"Comati with id {comatiId} not found.");
             }
 
             comati.IsDeleted = true;
             _comatiContext.SaveChanges();
 
-            return Ok();
+            return Ok($"Delete Success");
         }
 
     }
