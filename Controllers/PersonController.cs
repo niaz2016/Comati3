@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
 using Comati3.DTOs;
+using Microsoft.EntityFrameworkCore.Update;
 using ZstdSharp;
 using Mysqlx;
 
@@ -22,13 +23,28 @@ namespace Comati3.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] PersonPostDTO person)
         {
-            
-            Person p = person.ToModel<Person>();
-            _comatiContext.Persons.Add(p);
-            _comatiContext.SaveChanges();
+            return AddOrUpdatePerson(person);
 
-            return Ok(p);
+
         }
+        private IActionResult AddOrUpdatePerson(PersonPostDTO person)
+        {
+            if (person.Id == null || person.Id==0)
+            {
+                Person p = person.ToModel<Person>();
+                _comatiContext.Persons.Add(p);
+                _comatiContext.SaveChanges();
+                return Ok(p);
+            }
+            else
+            {
+                Person p = person.ToModel<Person>();
+                _comatiContext.Persons.Update(p);
+                _comatiContext.SaveChanges();
+                return Ok(p);
+            }
+
+        } 
         // GET: api/<PersonController>
         [HttpGet]
         public IEnumerable<PersonsGetDTO> GetPersons()
@@ -44,6 +60,11 @@ namespace Comati3.Controllers
             });
             return p;
         }
+        [HttpPost("personUpdate")]
+        public IActionResult Update(PersonPostDTO person)
+        {
+            return AddOrUpdatePerson(person);
+        }
 
         // GET api/<PersonController>/5
         [HttpGet("personId")]
@@ -52,7 +73,7 @@ namespace Comati3.Controllers
             else
             {
                 PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id).Select(person => new PersonPostDTO
-                {
+                {   
                     Name = person.Name,
                     Address = person.Address,
                     Phone = person.Phone,
