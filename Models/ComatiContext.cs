@@ -9,10 +9,10 @@ namespace Comati3.Models
         {
            
          }
-        public DbSet<Person>? Persons { get; set; }
-        public DbSet<Comati>? Comaties { get; set; }
-        public DbSet<ComatiMember>? Members { get; set; }
-        public DbSet<ComatiPayment>? ComatiPayments { get; set; }
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<Comati> Comaties { get; set; }
+        public DbSet<ComatiMember> Members { get; set; }
+        public DbSet<ComatiPayment> ComatiPayments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

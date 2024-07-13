@@ -1,6 +1,8 @@
 ﻿using Comati3.DTOs;
 using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ZstdSharp.Unsafe;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -30,19 +32,20 @@ namespace Comati3.Controllers
         //GET: api/<ComatiController>
         [HttpGet]
         public IEnumerable<ComatiGetDTO> ComatiesByMgrId(int MgrId)
-        {
-            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Where(comati => comati.ManagerId == MgrId && comati.IsDeleted==false).Select(comati => new ComatiGetDTO
+        {                                                                   //.Include(y=>y.Payments).Include(y=>y.Members).ThenInclude(y=>y.Person).ToList()
+            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Where(comati => comati.ManagerId == MgrId && comati.IsDeleted == false).Select(comati => new ComatiGetDTO
             {
                 Id = comati.Id,
                 ManagerId = comati.ManagerId,
                 Name = comati.Name,
                 Start_Date = comati.Start_Date,
-                End_Date =  comati.Start_Date.AddMonths(comati.Members.Sum(member=>member.Amount)/comati.Per_Head),
+                End_Date =  comati.Start_Date.AddMonths((comati.Members.Sum(member=>member.Amount)/comati.Per_Head)-1),
                 Per_Head = comati.Per_Head,
                 Remarks = comati.Remarks,
                 TotalMembers = comati.Members != null ? comati.Members.Count : 0,
                 TotalComati = comati.Members.Sum(a => a.Amount),
-                TotalCollected = _comatiContext.ComatiPayments.Where(c => c.ComatiId == comati.Id).Select(c => c.Amount).Sum(),
+                
+                TotalCollected = comati.Payments.Sum(a => a.Amount),
                 Defaulters = comati.Members.Select(member => new DefaulterDTO
                 {
                    MemberId = member.Id,
@@ -55,7 +58,7 @@ namespace Comati3.Controllers
                    Remarks = member.Person.Remarks,
                 }).Where(y => y.IsNotPaid).ToList(),
             }
-            ).ToList();
+            );
             return comaties;
         }
         // Get a comati, many details

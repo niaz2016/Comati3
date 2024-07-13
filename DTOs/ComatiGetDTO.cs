@@ -12,7 +12,7 @@
         public int TotalComati { get; set; }
         public int TotalCollected { get; set; }
         public string? Remarks { get; set; }
-        public IEnumerable<MemberPaymentsDTO>? MembersPayments { get; set; }
+        public IEnumerable<ComatiMemberPostDTO>? ComatiMembers { get; set; }
         public IEnumerable<DefaulterDTO>? Defaulters { get; set; }
 
     }

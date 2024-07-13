@@ -21,20 +21,16 @@ namespace Comati3.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] ComatiMemberPostDTO comatiMember)
         {
-
-            var lastMemberNo = 0;
-            var lastQuer = _comatiContext.Members.Where(item => item.ComatiId == comatiMember.ComatiId).OrderBy(y => y.Id);
-            if (lastQuer.Any()) 
-            {
-                lastMemberNo = lastQuer.Last().ComatiMemberNo;
-            }
             ComatiMember cm = comatiMember.ToModel<ComatiMember>();
-            if (comatiMember.Id == null || comatiMember.Id == 0) {
-                cm.ComatiMemberNo = lastMemberNo + 1; 
+            if (comatiMember.Id == null || comatiMember.Id == 0)
+            {
                 _comatiContext.Members.Add(cm);
-                _comatiContext.SaveChanges(); }
-            else { _comatiContext.Members.Update(cm); _comatiContext.SaveChanges(); }
-
+            }
+            else
+            {
+                _comatiContext.Members.Update(cm);
+            }
+            _comatiContext.SaveChanges();
             return Ok(cm);
         }
         // GET: api/<ComatiMemberGetDTOController>
@@ -46,14 +42,15 @@ namespace Comati3.Controllers
                 .Select(member => new ComatiMemberGetDTO
                 {
                     Id = member.Id,
+                    PersonId = member.PersonId,   //needed to update comatiMember 
                     ComatiName = member.Comati.Name,
                     ComatiMemberNo = member.ComatiMemberNo,
                     Name = member.Person.Name,
                     OpeningMonth = member.OpeningMonth,
                     Amount = member.Amount,
                     Remarks = member.Remarks,
-                })
-                .ToList();
+                    
+                });
 
             return comatiMembers;
         }
@@ -67,6 +64,7 @@ namespace Comati3.Controllers
                 ComatiMemberNo = cm.ComatiMemberNo,
                 OpeningMonth= cm.OpeningMonth,
                 Remarks = cm.Remarks,
+                PersonId= memberId,
             }).FirstOrDefault();
             return member;
         }

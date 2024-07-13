@@ -27,16 +27,16 @@ namespace Comati3.Controllers
         [HttpPost]
         private IActionResult AddOrUpdatePerson(PersonPostDTO person)
         {
+            Person p = person.ToModel<Person>();
             if (person.Id == null || person.Id==0)
             {
-                Person p = person.ToModel<Person>();
+                
                 _comatiContext.Persons.Add(p);
                 _comatiContext.SaveChanges();
                 return Ok(p);
             }
             else
             {
-                Person p = person.ToModel<Person>();
                 _comatiContext.Persons.Update(p);
                 _comatiContext.SaveChanges();
                 return Ok(p);
@@ -66,24 +66,16 @@ namespace Comati3.Controllers
 
         // GET api/<PersonController>/5
         [HttpGet("personId")]
-        public PersonPostDTO GetPersons(int id)
-        { 
+        public PersonPostDTO GetPersonById(int id)
+        {
+            PersonPostDTO p = _comatiContext.Persons.Where(p=> p.Id == id && p.IsDeleted == false).Select(newP =>new PersonPostDTO
             {
-                if (_comatiContext.Persons != null)
-                {
-                    PersonPostDTO p = _comatiContext.Persons.Where(person => person.Id == id && person.IsDeleted == false).Select(person => new PersonPostDTO
-                    {
-                        Name = person.Name,
-                        Address = person.Address,
-                        Phone = person.Phone,
-                        Remarks = person.Remarks,
-                    }).First();
-                    
-                    return p;
-                } 
-                
-                return null;
-            }
+                Name = newP.Name,
+                Phone = newP.Phone,
+                Address = newP.Address,
+                Remarks = newP.Remarks,
+            }).FirstOrDefault();
+            return p;
         }
 
         // DELETE api/<PersonController>/5

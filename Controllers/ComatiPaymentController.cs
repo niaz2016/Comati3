@@ -25,20 +25,15 @@ namespace Comati3.Controllers
 
             return Ok(cm);
         }
-        [HttpGet("ComatiId")]
-        public int GetcollectedAmount(int comatiId)
-        {
-            int total = _comatiContext.ComatiPayments.Where(cp => cp.ComatiId == comatiId).Select(cp=>cp.Amount).Sum();
-            return total;
-        }
+        
         [HttpGet("memberPayments")]
-        public IEnumerable<PaymentGetDTO> MemberPayments(int memberId, int comatiId)
+        public IEnumerable<PaymentGetDTO> MemberPayments(int memberId)
         {
-            IEnumerable<PaymentGetDTO> payments = _comatiContext.ComatiPayments.Where(c => c.ComatiId == comatiId && c.MemberId == memberId).Select(c => new PaymentGetDTO
+            IEnumerable<PaymentGetDTO> payments = _comatiContext.ComatiPayments.Where(cp => cp.MemberId == memberId).Select(c => new PaymentGetDTO
             {
                 PaymentDate = c.PaymentDate,
                 Amount = c.Amount,
-                Remarks =c.Remarks,
+                Remarks = c.Remarks,
             }).ToList();
             return payments;
         }

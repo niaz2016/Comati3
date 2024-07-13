@@ -6,6 +6,7 @@ namespace Comati3.DTOs
     public class ComatiMemberPostDTO : BaseDTO
     {
         public int? Id { get; set; }
+        public string? Name { get; set; }
         public int ComatiId { get; set; }
         public int? ComatiMemberNo { get; set; }
         public int PersonId { get; set; }
