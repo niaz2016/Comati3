@@ -7,7 +7,6 @@ namespace Comati3.Models
     {
         [ForeignKey("ComatiId")]
         public int ComatiId { get; set; }
-        public int ComatiMemberNo { get; set; }
         public Comati Comati { get; set; } = null!;
         [ForeignKey("PersonId")]
         public int PersonId { get; set; }

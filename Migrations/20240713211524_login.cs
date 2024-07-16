@@ -7,7 +7,7 @@ using MySql.EntityFrameworkCore.Metadata;
 namespace Comati3.Migrations
 {
     /// <inheritdoc />
-    public partial class reset : Migration
+    public partial class login : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,13 +16,14 @@ namespace Comati3.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Persons",
+                name: "Person",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "longtext", nullable: false),
                     Phone = table.Column<string>(type: "longtext", nullable: false),
+                    Password = table.Column<string>(type: "longtext", nullable: false),
                     Address = table.Column<string>(type: "longtext", nullable: true),
                     Remarks = table.Column<string>(type: "longtext", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -32,7 +33,7 @@ namespace Comati3.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Persons", x => x.Id);
+                    table.PrimaryKey("PK_Person", x => x.Id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -56,9 +57,9 @@ namespace Comati3.Migrations
                 {
                     table.PrimaryKey("PK_Comaties", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comaties_Persons_ManagerId",
+                        name: "FK_Comaties_Person_ManagerId",
                         column: x => x.ManagerId,
-                        principalTable: "Persons",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -91,9 +92,9 @@ namespace Comati3.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Members_Persons_PersonId",
+                        name: "FK_Members_Person_PersonId",
                         column: x => x.PersonId,
-                        principalTable: "Persons",
+                        principalTable: "Person",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -172,7 +173,7 @@ namespace Comati3.Migrations
                 name: "Comaties");
 
             migrationBuilder.DropTable(
-                name: "Persons");
+                name: "Person");
         }
     }
 }

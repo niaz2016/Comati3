@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ZstdSharp.Unsafe;
 
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-
 namespace Comati3.Controllers
 {
     [Route("api/[controller]")]
@@ -42,15 +40,14 @@ namespace Comati3.Controllers
                 End_Date =  comati.Start_Date.AddMonths((comati.Members.Sum(member=>member.Amount)/comati.Per_Head)-1),
                 Per_Head = comati.Per_Head,
                 Remarks = comati.Remarks,
-                TotalMembers = comati.Members != null ? comati.Members.Count : 0,
-                TotalComati = comati.Members.Sum(a => a.Amount),
+                TotalMembers = comati.Members != null ? comati.Members.Where(c=>c.IsDeleted==false).Count() : 0,
+                TotalComati = comati.Members.Where(m=>m.IsDeleted==false).Sum(a => a.Amount),
                 
                 TotalCollected = comati.Payments.Sum(a => a.Amount),
-                Defaulters = comati.Members.Select(member => new DefaulterDTO
+                Defaulters = comati.Members.Where(member=>member.IsDeleted==false).Select(member => new DefaulterDTO
                 {
                    MemberId = member.Id,
                    Name= member.Person.Name,
-                   ComatiMemberNo =  member.ComatiMemberNo,
                    Phone = member.Person.Phone,
                    Amount =  member.Amount,
                    IsNotPaid = (bool?)(member.ComatiPayments.Count == 0 || member.ComatiPayments.OrderBy(y => y.PaymentDate).LastOrDefault().PaymentDate.Month < DateTime.Now.Month) ?? false,
@@ -66,7 +63,7 @@ namespace Comati3.Controllers
         public ComatiGetDTO GetComati(int comatiId)
         {
 
-            ComatiGetDTO comati = _comatiContext.Comaties.Where(c => c.Id == comatiId).Select(c => new ComatiGetDTO
+            ComatiGetDTO comati = _comatiContext.Comaties.Where(c => c.Id == comatiId && c.IsDeleted == false).Select(c => new ComatiGetDTO
             {
                 Id = c.Id,
                 ManagerId = c.ManagerId,
@@ -80,7 +77,6 @@ namespace Comati3.Controllers
                 TotalCollected = c.Payments.Select(c => c.Amount).Sum(),
                 Defaulters = c.Members.Select(member => new DefaulterDTO{
                     Name = member.Person.Name,
-                    ComatiMemberNo = member.ComatiMemberNo,
                     Amount = member.Amount,
                     IsNotPaid = (bool?)( member.ComatiPayments.Count ==0 || member.ComatiPayments.OrderBy(y=>y.PaymentDate).LastOrDefault().PaymentDate.Month < DateTime.Now.Month) ?? false
                 }).Where(y=>y.IsNotPaid).ToList(),

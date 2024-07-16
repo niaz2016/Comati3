@@ -15,12 +15,12 @@ namespace Comati3
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
 
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ComatiContext>(item =>
-            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
+            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=5540321965;"));
+            //item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", builder =>

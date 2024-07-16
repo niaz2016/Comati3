@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
 using Comati3.DTOs;
-using Microsoft.EntityFrameworkCore;
-
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Comati3.Controllers
@@ -24,13 +22,11 @@ namespace Comati3.Controllers
             return AddOrUpdatePerson(person);
 
         }
-        [HttpPost]
         private IActionResult AddOrUpdatePerson(PersonPostDTO person)
         {
             Person p = person.ToModel<Person>();
             if (person.Id == null || person.Id==0)
             {
-                
                 _comatiContext.Persons.Add(p);
                 _comatiContext.SaveChanges();
                 return Ok(p);
@@ -47,7 +43,7 @@ namespace Comati3.Controllers
         [HttpGet]
         public IEnumerable<PersonsGetDTO> GetPersons()
         {
-            IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Select(person => new PersonsGetDTO
+            IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Where(p=>p.IsDeleted==false).Select(person => new PersonsGetDTO
             {
                 Id = person.Id,
                 Name = person.Name,
@@ -58,22 +54,17 @@ namespace Comati3.Controllers
             });
             return p;
         }
-        [HttpPost("personUpdate")]
-        public IActionResult Update(PersonPostDTO person)
-        {
-            return AddOrUpdatePerson(person);
-        }
-
+        
         // GET api/<PersonController>/5
         [HttpGet("personId")]
         public PersonPostDTO GetPersonById(int id)
         {
-            PersonPostDTO p = _comatiContext.Persons.Where(p=> p.Id == id && p.IsDeleted == false).Select(newP =>new PersonPostDTO
+            PersonPostDTO p = _comatiContext.Persons.Where(p => p.Id == id).Select(n => new PersonPostDTO
             {
-                Name = newP.Name,
-                Phone = newP.Phone,
-                Address = newP.Address,
-                Remarks = newP.Remarks,
+                Name = n.Name,
+                Phone = n.Phone,
+                Address = n.Address,
+                Remarks = n.Remarks,
             }).FirstOrDefault();
             return p;
         }
@@ -84,7 +75,7 @@ namespace Comati3.Controllers
         {
             _comatiContext.Persons.Find(id).IsDeleted= true;
             _comatiContext.SaveChanges();
-            return Ok("Delete Success");
+            return Ok(id);
         }
     }
 }

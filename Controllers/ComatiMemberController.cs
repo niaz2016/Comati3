@@ -38,13 +38,12 @@ namespace Comati3.Controllers
         public IEnumerable<ComatiMemberGetDTO> GetMembers(int comatiId)
         {
             IEnumerable<ComatiMemberGetDTO> comatiMembers = _comatiContext.Members
-                .Where(member => member.ComatiId == comatiId)
+                .Where(member => member.ComatiId == comatiId && member.IsDeleted == false)
                 .Select(member => new ComatiMemberGetDTO
                 {
                     Id = member.Id,
                     PersonId = member.PersonId,   //needed to update comatiMember 
                     ComatiName = member.Comati.Name,
-                    ComatiMemberNo = member.ComatiMemberNo,
                     Name = member.Person.Name,
                     OpeningMonth = member.OpeningMonth,
                     Amount = member.Amount,
@@ -57,11 +56,10 @@ namespace Comati3.Controllers
         [HttpGet("memberId")]
         public ComatiMemberGetDTO GetMember(int memberId) {
 
-            ComatiMemberGetDTO member = _comatiContext.Members.Where(m => m.Id == memberId).Select(cm => new ComatiMemberGetDTO
+            ComatiMemberGetDTO member = _comatiContext.Members.Where(m => m.Id == memberId && m.IsDeleted==false).Select(cm => new ComatiMemberGetDTO
             {
                 ComatiName = cm.Comati.Name,
                 Amount = cm.Amount,
-                ComatiMemberNo = cm.ComatiMemberNo,
                 OpeningMonth= cm.OpeningMonth,
                 Remarks = cm.Remarks,
                 PersonId= memberId,

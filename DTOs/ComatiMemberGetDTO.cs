@@ -5,7 +5,6 @@
         public int Id { get; set; } // necessary to  post Payment against member
         public int PersonId { get; set; }
         public string ComatiName { get; set; }=null!;
-        public int ComatiMemberNo { get; set; }
         public int Amount { get; set; }
         public DateTime OpeningMonth { get; set; }
         public string? Remarks { get; set; }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Comati3.Migrations
 {
     [DbContext(typeof(ComatiContext))]
-    [Migration("20240711134746_comatiIdremoved")]
-    partial class comatiIdremoved
+    [Migration("20240715161400_password")]
+    partial class password
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -73,9 +73,6 @@ namespace Comati3.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ComatiId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ComatiMemberNo")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -175,6 +172,9 @@ namespace Comati3.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -184,7 +184,7 @@ namespace Comati3.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("Comati3.Models.Comati", b =>

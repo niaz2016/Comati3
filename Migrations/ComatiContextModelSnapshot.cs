@@ -72,9 +72,6 @@ namespace Comati3.Migrations
                     b.Property<int>("ComatiId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ComatiMemberNo")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
@@ -172,6 +169,9 @@ namespace Comati3.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Password")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -181,7 +181,7 @@ namespace Comati3.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Persons");
+                    b.ToTable("Person");
                 });
 
             modelBuilder.Entity("Comati3.Models.Comati", b =>
