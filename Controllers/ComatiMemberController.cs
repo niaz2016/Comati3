@@ -72,7 +72,7 @@ namespace Comati3.Controllers
             {
                 _comatiContext.Members.Find(id).IsDeleted = true;
             _comatiContext.SaveChanges();
-            return Ok("Delete Success");
+            return Ok(id);
             }
     }
 }

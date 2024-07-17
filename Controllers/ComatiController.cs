@@ -106,7 +106,7 @@ namespace Comati3.Controllers
             comati.IsDeleted = true;
             _comatiContext.SaveChanges();
 
-            return Ok($"Delete Success");
+            return Ok(comatiId);
         }
 
     }
