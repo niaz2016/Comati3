@@ -24,38 +24,38 @@ namespace Comati3.Controllers
             if (comati.Id == null || comati.Id == 0) { _comatiContext.Comaties.Add(c); }
             else { _comatiContext.Comaties.Update(c); }
             _comatiContext.SaveChanges();
-
             return Ok(c);
         }
         //GET: api/<ComatiController>
         [HttpGet]
         public IEnumerable<ComatiGetDTO> ComatiesByMgrId(int MgrId)
-        {                                                                   //.Include(y=>y.Payments).Include(y=>y.Members).ThenInclude(y=>y.Person).ToList()
-            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Where(comati => comati.ManagerId == MgrId && comati.IsDeleted == false).Select(comati => new ComatiGetDTO
+        {                                                                   
+            IEnumerable<ComatiGetDTO> comaties = _comatiContext.Comaties.Include(y => y.Payments).Include(y => y.Members).ThenInclude(p => p.Person).ToList().Where(comati => comati.ManagerId == MgrId && comati.IsDeleted == false).Select(comati => new ComatiGetDTO
             {
                 Id = comati.Id,
                 ManagerId = comati.ManagerId,
                 Name = comati.Name,
                 Start_Date = comati.Start_Date,
-                End_Date =  comati.Start_Date.AddMonths((comati.Members.Sum(member=>member.Amount)/comati.Per_Head)-1),
+                End_Date = comati.Start_Date.AddMonths((comati.Members.Sum(member => member.Amount) / comati.Per_Head) - 1),
                 Per_Head = comati.Per_Head,
                 Remarks = comati.Remarks,
-                TotalMembers = comati.Members != null ? comati.Members.Where(c=>c.IsDeleted==false).Count() : 0,
-                TotalComati = comati.Members.Where(m=>m.IsDeleted==false).Sum(a => a.Amount),
-                
-                TotalCollected = comati.Payments.Sum(a => a.Amount),
-                Defaulters = comati.Members.Where(member=>member.IsDeleted==false).Select(member => new DefaulterDTO
+                TotalMembers = comati.Members != null ? comati.Members.Where(c => c.IsDeleted == false).Count() : 0,
+                TotalComati = comati.Members.Where(m => m.IsDeleted == false).Sum(a => a.Amount),
+                TotalCollected = comati.Payments?.Where(p => p.PaymentDate.Month == DateTime.Now.Month).Sum(a => a.Amount) ?? 0,
+                Defaulters = comati.Members.Select(member => new DefaulterDTO
                 {
-                   MemberId = member.Id,
-                   Name= member.Person.Name,
-                   Phone = member.Person.Phone,
-                   Amount =  member.Amount,
-                   IsNotPaid = (bool?)(member.ComatiPayments.Count == 0 || member.ComatiPayments.OrderBy(y => y.PaymentDate).LastOrDefault().PaymentDate.Month < DateTime.Now.Month) ?? false,
-                   Address = member.Person.Address,
-                   Remarks = member.Person.Remarks,
+                    MemberId = member.Id,
+                    ComatiId = member.ComatiId,
+                    Phone = member.Person.Phone,
+                    Name = member.Person.Name,
+                    Amount = member.Amount,
+                    Address = member.Person.Address,
+                    Remarks = member.Remarks,
+                    IsNotPaid = (bool?)!(member.ComatiPayments?.Any() == true &&
+                   member.ComatiPayments.OrderBy(y => y.PaymentDate)
+                                       .LastOrDefault()?.PaymentDate.Month >= DateTime.Now.Month) ?? true
                 }).Where(y => y.IsNotPaid).ToList(),
-            }
-            );
+            });
             return comaties;
         }
         // Get a comati, many details
@@ -63,7 +63,7 @@ namespace Comati3.Controllers
         public ComatiGetDTO GetComati(int comatiId)
         {
 
-            ComatiGetDTO comati = _comatiContext.Comaties.Where(c => c.Id == comatiId && c.IsDeleted == false).Select(c => new ComatiGetDTO
+            ComatiGetDTO comati = _comatiContext.Comaties.Include(y => y.Payments).Include(y => y.Members).ThenInclude(y => y.Person).ToList().Where(c => c.Id == comatiId && c.IsDeleted == false).Select(c => new ComatiGetDTO
             {
                 Id = c.Id,
                 ManagerId = c.ManagerId,
@@ -74,17 +74,36 @@ namespace Comati3.Controllers
                 Remarks = c.Remarks,
                 TotalMembers = c.Members != null ? c.Members.Count() : 0,
                 TotalComati = c.Members.Select(a => a.Amount).Sum(),
-                TotalCollected = c.Payments.Select(c => c.Amount).Sum(),
+                TotalCollected = c.Payments?.Where(p => p.PaymentDate.Month == DateTime.Now.Month).Sum(a => a.Amount) ?? 0,
                 Defaulters = c.Members.Select(member => new DefaulterDTO{
+                    MemberId = member.Id,
+                    ComatiId = member.ComatiId,
+                    Phone = member.Person.Phone,
                     Name = member.Person.Name,
                     Amount = member.Amount,
-                    IsNotPaid = (bool?)( member.ComatiPayments.Count ==0 || member.ComatiPayments.OrderBy(y=>y.PaymentDate).LastOrDefault().PaymentDate.Month < DateTime.Now.Month) ?? false
-                }).Where(y=>y.IsNotPaid).ToList(),
+                    Address = member.Person.Address,
+                    Remarks = member.Remarks,
+                    IsNotPaid = (bool?)!(member.ComatiPayments?.Any() == true &&
+                   member.ComatiPayments.OrderBy(y => y.PaymentDate)
+                                       .LastOrDefault()?.PaymentDate.Month >= DateTime.Now.Month) ?? true
+        }).Where(y=>y.IsNotPaid).ToList(),
 
             }).First();
            // int months = comati.Members.Count(a => a.Amount).Sum()/c.Per_Head;
             
             return comati;
+        }
+        [HttpGet("defaulters")]
+        public DefaulterDTO Defaulters(int comatiId)
+        {
+            DefaulterDTO defaulters = _comatiContext.Members.Select(def=>new DefaulterDTO
+            {
+                Name = def.Person.Name,
+                Amount = def.Amount,
+                IsNotPaid = (bool?)(def.ComatiPayments.Count == 0 || def.ComatiPayments.OrderBy(y => y.PaymentDate).LastOrDefault().PaymentDate.Month < DateTime.Now.Month) ?? false
+
+            }).Where(y=>y.IsNotPaid).First();
+            return defaulters;
         }
 
 

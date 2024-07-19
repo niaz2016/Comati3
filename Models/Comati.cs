@@ -9,8 +9,8 @@ namespace Comati3.Models
         [ForeignKey("PersonId")]
         public int ManagerId { get; set; }
         public Person? Manager { get; set; } // must be null to post a comati
-        public ICollection<ComatiMember> Members { get; set; }
-        public ICollection<ComatiPayment> Payments { get; set; }
+        public ICollection<ComatiMember> Members { get; set; } = null!;
+        public ICollection<ComatiPayment> Payments { get; set; }=null!;
         public string? Remarks { get; set; }
     }
 
