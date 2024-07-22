@@ -31,7 +31,6 @@ namespace Comati3
             // Configure Kestrel to listen on any IP address
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.ListenAnyIP(5000); // HTTP
                 options.ListenAnyIP(7258, listenOptions =>
                 {
                    // HTTPS
