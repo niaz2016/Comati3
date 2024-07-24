@@ -42,8 +42,8 @@ namespace Comati3.Controllers
                 Remarks = comati.Remarks,
                 TotalMembers = comati.Members != null ? comati.Members.Where(c=>c.IsDeleted==false).Count() : 0,
                 TotalComati = comati.Members.Where(m=>m.IsDeleted==false).Sum(a => a.Amount),
-                
-                TotalCollected = comati.Payments.Sum(a => a.Amount),
+
+                TotalCollected = comati.Payments.Select(c => c.Amount).Sum(),
                 Defaulters = comati.Members.Where(member=>member.IsDeleted==false).Select(member => new DefaulterDTO
                 {
                    MemberId = member.Id,
