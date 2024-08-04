@@ -16,8 +16,8 @@ namespace Comati3
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
             builder.Services.AddDbContext<ComatiContext>(item =>
-            //item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=5540321965;"));
-            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
+            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=5540321965;"));
+            //item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -28,15 +28,15 @@ namespace Comati3
                 });
             });
 
-            // Configure Kestrel to listen on any IP address
+            /*// Configure Kestrel to listen on any IP address
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.ListenAnyIP(7258, listenOptions =>
                 {
-                   // HTTPS
+
                 });
                 
-            });
+            });*/
             
             var app = builder.Build();
 

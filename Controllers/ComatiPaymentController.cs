@@ -1,7 +1,6 @@
 ﻿using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Comati3.DTOs;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Comati3.Controllers
 {
@@ -36,6 +35,27 @@ namespace Comati3.Controllers
                 Remarks = c.Remarks,
             }).ToList();
             return payments;
+        }
+        [HttpGet("defaulters")]
+        public IActionResult AnyDefaulter(int comatiId)
+        {
+            Comati c = _comatiContext.Comaties.Find(comatiId);
+            DateTime currentDate = DateTime.Now;
+
+            // Calculate the total number of months passed
+            int yearsDifference = currentDate.Year - c.Start_Date.Year;
+            int monthsDifference = currentDate.Month - c.Start_Date.Month;
+            int totalMonthsPassed = (yearsDifference * 12) + monthsDifference+1; //we have to count first month as well,
+            //Amount that must have been paid until this month = shouldBe
+
+            IEnumerable<AllTimeDefaulterDTO> defaultersList = [.. _comatiContext.Members.Where(c => c.ComatiId == comatiId).Select(d => new AllTimeDefaulterDTO
+            {
+                Name = d.Person.Name,
+                MemberId = d.Id,
+                TotalPaid = d.ComatiPayments.Sum(a=>a.Amount),
+                AmountOverdue = d.Amount*totalMonthsPassed - d.ComatiPayments.Sum(a => a.Amount),
+            }).Where(d=>d.TotalPaid<d.AmountOverdue*totalMonthsPassed)];
+            return Ok(defaultersList);
         }
 
         // GET api/<ComatiPaymentController>/5

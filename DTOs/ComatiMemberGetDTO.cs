@@ -11,6 +11,6 @@
         public string Name { get; set; } = null!;
         public DateTime OpeningMonth { get; set; }
         public string? Remarks { get; set; }
-        public ICollection<DefaulterDTO> Payments { get; set; } = null!;
+        public ICollection<DefaulterDTO>? Payments { get; set; }
     }
 }

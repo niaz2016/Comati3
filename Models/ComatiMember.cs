@@ -14,7 +14,7 @@ namespace Comati3.Models
         public int Amount {  get; set; }
         public DateTime OpeningMonth { get; set; }
         public string? Remarks { get; set; }
-        public ICollection<ComatiPayment>? ComatiPayments { get; set; }
+        public ICollection<ComatiPayment> ComatiPayments { get; set; }
 
     }
 }
