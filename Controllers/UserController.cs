@@ -1,11 +1,7 @@
 ﻿using Comati3.DTOs;
 using Comati3.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Mysqlx;
-using System.ComponentModel.DataAnnotations;
-
 namespace Comati3.Controllers
 {
     [Route("api/[controller]")]
@@ -20,8 +16,9 @@ namespace Comati3.Controllers
         {
             if(user.Password.Length < 4) { return BadRequest(new { message = "Invalid Password" }); }
             else if(_comatiContext.Persons.Where(p=>p.Phone==user.Phone).Any()) { return BadRequest(new { message = "Phone already registered" }); }
-            else { return AddOrUpdateUser(user); }
-            
+            else {
+                return AddOrUpdateUser(user);
+            }
         }
         [HttpPost]
         private IActionResult AddOrUpdateUser(UserDTO user)
@@ -31,10 +28,13 @@ namespace Comati3.Controllers
             {
                 _comatiContext.Users.Add(p);
                 _comatiContext.SaveChanges();
+                p.Mgr = _comatiContext.Persons.Where(_p => _p.Phone == user.Phone).Select(p=>p.Id).FirstOrDefault();
+                _comatiContext.SaveChanges();
                 return Ok(p);
             }
             else
             {
+                p.Mgr= user.Id;
                 _comatiContext.Users.Update(p);
                 _comatiContext.SaveChanges();
                 return Ok(p);
@@ -68,23 +68,6 @@ namespace Comati3.Controllers
             return BadRequest(new { message = "Wrong Password" });
         }
 
-
-        // GET: api/<UserController>
-        /*[HttpGet]
-        public IEnumerable<UserDTO> GetUsers()
-        {
-            IEnumerable<UserDTO> p = _comatiContext.Users.Where(p => p.IsDeleted == false).Select(user => new UserDTO
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Phone = user.Phone,
-                Address = user.Address,
-                Remarks = user.Remarks,
-
-            });
-            return p;
-        }*/
-        // GET: UserController/Delete/5
         [HttpDelete]
         public ActionResult Delete(int id)
         {

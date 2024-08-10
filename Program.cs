@@ -1,7 +1,8 @@
 using Comati3.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Comati3
 {
@@ -15,9 +16,12 @@ namespace Comati3
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddDbContext<ComatiContext>(item =>
-            item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=5540321965;"));
-            //item.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
+
+            // Configure the DbContext
+            builder.Services.AddDbContext<ComatiContext>(options =>
+                options.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
+
+            // Add CORS
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
@@ -28,17 +32,35 @@ namespace Comati3
                 });
             });
 
-            /*// Configure Kestrel to listen on any IP address
-            builder.WebHost.ConfigureKestrel(options =>
+            // Add JWT Authentication
+            var key = Encoding.UTF8.GetBytes("123"); // Replace with your secret key
+            builder.Services.AddAuthentication(options =>
             {
-                options.ListenAnyIP(7258, listenOptions =>
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "http://localhost:4200",
+                    ValidAudience = "http://localhost:4200",
+                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                };
+            });
 
-                });
-                
-            });*/
-            
             var app = builder.Build();
+
+            // Apply migrations at startup
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ComatiContext>();
+                dbContext.Database.Migrate(); // This line applies pending migrations
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -48,7 +70,11 @@ namespace Comati3
             }
 
             app.UseHttpsRedirection();
+
+            // Enable Authentication and Authorization middleware
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseCors("AllowAll");
 
             app.MapControllers();

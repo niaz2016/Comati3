@@ -6,6 +6,7 @@
         public string Name { get; set; } = null!;
         public string Phone { get; set; } = null!;
         public string Password { get; set; } = null!;
+        public int Mgr { get; set; }
         public string? Address { get; set; }
         public string? Remarks { get; set; }
 

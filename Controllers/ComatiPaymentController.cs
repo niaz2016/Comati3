@@ -62,10 +62,7 @@ namespace Comati3.Controllers
         [HttpGet]
         public string GetPaymentStatus(DateOnly date, int comatiId)
         {
-            //PaymentGetDTO payStatus= _comatiContext.ComatiPayments.
-            
-
-                return  "Method not implemented";
+             return  "Method not implemented";
         }
 
     }

@@ -61,7 +61,6 @@ namespace Comati3.Controllers
         [HttpGet("comati")]
         public ComatiGetDTO GetComati(int comatiId)
         {
-
             ComatiGetDTO comati = _comatiContext.Comaties.Include(y => y.Payments).Include(y => y.Members).ThenInclude(y => y.Person).ToList().Where(c => c.Id == comatiId && c.IsDeleted == false).Select(c => new ComatiGetDTO
             {
                 Id = c.Id,

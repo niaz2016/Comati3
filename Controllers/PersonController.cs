@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Comati3.Models;
 using Comati3.DTOs;
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using Microsoft.AspNetCore.Authorization;
 
 namespace Comati3.Controllers
 {
     
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class PersonController : ControllerBase
     {
         readonly ComatiContext _comatiContext;
@@ -32,7 +32,7 @@ namespace Comati3.Controllers
                 return Ok(p);
             }
             else
-            {
+            { if (p.Id == p.Mgr) { p.Password = _comatiContext.Persons.Where(p => p.Id == p.Id).Select(p => p.Password).FirstOrDefault(); }
                 _comatiContext.Persons.Update(p);
                 _comatiContext.SaveChanges();
                 return Ok(p);
@@ -40,10 +40,11 @@ namespace Comati3.Controllers
 
         }
         // GET: api/<PersonController>
+        
         [HttpGet]
-        public IEnumerable<PersonsGetDTO> GetPersons()
+        public IEnumerable<PersonsGetDTO> GetPersons(int MgrId)
         {
-            IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Where(p=>p.IsDeleted==false).Select(person => new PersonsGetDTO
+            IEnumerable<PersonsGetDTO> p = _comatiContext.Persons.Where(p=>p.IsDeleted==false && p.Mgr == MgrId ).Select(person => new PersonsGetDTO
             {
                 Id = person.Id,
                 Name = person.Name,

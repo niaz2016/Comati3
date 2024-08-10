@@ -1,10 +1,6 @@
 ﻿using Comati3.Models;
 using Microsoft.AspNetCore.Mvc;
 using Comati3.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Google.Protobuf.WellKnownTypes;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Comati3.Controllers
 {
@@ -71,7 +67,7 @@ namespace Comati3.Controllers
             public IActionResult Delete(int id)
             {
                 _comatiContext.Members.Find(id).IsDeleted = true;
-            _comatiContext.SaveChanges();
+                _comatiContext.SaveChanges();
             return Ok(id);
             }
     }
