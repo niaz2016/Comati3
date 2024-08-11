@@ -1,15 +1,16 @@
 ﻿using Comati3.DTOs;
 using Comati3.Models;
+using Comati3.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace Comati3.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(ComatiContext comatiContext) : Controller
+    public class UserController(ComatiContext comatiContext, Cookies cookies) : Controller
     {
         readonly ComatiContext _comatiContext = comatiContext;
-
+        readonly Cookies _cookies = cookies;
         // POST api/<UserController>
         [HttpPost]
         public IActionResult Post([FromBody] UserDTO user)
@@ -43,8 +44,8 @@ namespace Comati3.Controllers
         //Get: login to a user
         [HttpGet]
         public async Task<IActionResult> LoginUser([FromQuery] LoginDTO user)
-
         {
+            
             if (string.IsNullOrWhiteSpace(user.Password) || user.Password.Length < 4)
             {
                 return BadRequest("Invalid Password");
@@ -58,9 +59,12 @@ namespace Comati3.Controllers
                 var existingUser = await _comatiContext.Users
                     .Where(u => u.Phone == user.Phone && u.Password == user.Password)
                     .FirstOrDefaultAsync();
+                
 
                 if (existingUser != null)
                 {
+                    _cookies.SetCookies(Response, user);
+
                     return Ok(existingUser);
                 }
             }
