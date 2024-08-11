@@ -1,11 +1,8 @@
 using Comati3.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Net;
 using Comati3.Services;
-
+using Microsoft.AspNetCore.Identity;
+using System.ComponentModel;
 namespace Comati3
 {
     public class Program
@@ -13,12 +10,12 @@ namespace Comati3
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             // Add services to the container.
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<Cookies>();
+            builder.Services.AddScoped<Cookies>(); //instance of dealing with cookies, Cookies file created by user
+            builder.Services.AddScoped<PasswordHasher<object>>(); //instance of hashing password, MS's Identity class used.
             // Configure the DbContext
             builder.Services.AddDbContext<ComatiContext>(options =>
                 options.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
@@ -33,28 +30,8 @@ namespace Comati3
                           .AllowAnyHeader();
                 });
             });
-
-            // Add JWT Authentication
-            var key = Encoding.UTF8.GetBytes("123"); // Replace with your secret key
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = "http://localhost:4200",
-                    ValidAudience = "http://localhost:4200",
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
-                };
-            });
-
+            
+            
             var app = builder.Build();
 
             // Apply migrations at startup
