@@ -1,16 +1,15 @@
 ﻿using Comati3.DTOs;
 using Comati3.Models;
-using Comati3.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
+using System.Text.Json;
 namespace Comati3.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController(ComatiContext comatiContext, Cookies cookies, PasswordHasher<object> passwordHasher) : Controller
+    public class UserController( ComatiContext comatiContext, PasswordHasher<object> passwordHasher) : Controller
     {
         readonly ComatiContext _comatiContext = comatiContext;
-        readonly Cookies _cookies = cookies;
         readonly PasswordHasher<object> _passwordHasher = passwordHasher;
         
         // POST api/<UserController>
@@ -43,46 +42,48 @@ namespace Comati3.Controllers
             }
             return Ok(p);
         }
-        //Get: login to a user
         [HttpGet]
         public async Task<IActionResult> LoginUser([FromQuery] LoginDTO user)
         {
-            if (string.IsNullOrWhiteSpace(user.Password) || user.Password.Length < 4)
+            string tempPass = "AQAAAAIAAYagAAAAEIR+xxlxfzjQAIsWZa/3hKtzf42cFr7K4ajJ5WujswZD/I6ffSE+pB1tN5IUcuISfw==";
+            var userRecord =  _comatiContext.Users.Where(p => p.Phone == user.Phone).Select(n => new UserDTO
             {
-                return BadRequest("Invalid Password");
+                Id = n.Id,
+                Name = n.Name,
+                Phone = n.Phone,
+                Password = n.Password!,
+                Address = n.Address,
+                Mgr = n.Mgr,
+            });
+            if (userRecord == null)
+            {
+                return BadRequest(new { message = "No such phone is registered" });
             }
-            if (_comatiContext.Users.Where(u=>u.Phone==user.Phone).FirstOrDefault() == null)
+            var result = _passwordHasher.VerifyHashedPassword(user.Phone, tempPass, user.Password);
+            if (result != PasswordVerificationResult.Success)
             {
-                return BadRequest(new { message = "No such Phone is registered" });
+                return BadRequest(new { message = "Wrong Password" });
             }
-            else
+            else if (result == PasswordVerificationResult.Success)
             {
-                var hashedPassword = _comatiContext.Users.Where(p=>p.Phone == user.Phone).Select(p=>p.Password).FirstOrDefault();
-                var result = _passwordHasher.VerifyHashedPassword(user.Phone, hashedPassword, user.Password);
-                user.Password = hashedPassword;
-                if (result == PasswordVerificationResult.Success)
+                var cookieOptions = new CookieOptions
                 {
-                    Person person = _comatiContext.Persons.Where(p=> p.Phone == user.Phone).FirstOrDefault();
-                    var cookieOptions = new CookieOptions
-                    {
-                        Path = "/", // Specify the path where the cookie is valid
-                        HttpOnly = true, // The cookie is not accessible via JavaScript
-                        Secure = false, // The cookie is only sent over HTTPS
-                        Expires = DateTimeOffset.UtcNow.AddDays(1) // Set expiration to 1 day
-                    };
-                    Response.Cookies.Append(person.Phone, hashedPassword, cookieOptions);
-                    return Ok(person);
-                }
+                    IsEssential = true,
+                    Path = "/",
+                    HttpOnly = true,  // Prevents JavaScript from accessing the cookie (security)
+                    Secure = true,    // Use only HTTPS
+                    SameSite = SameSiteMode.None,
+                    Expires = DateTime.UtcNow.AddDays(1)
+                };
+                var userJson = JsonSerializer.Serialize(userRecord);
+                Response.Cookies.Append("User", userJson, cookieOptions);
             }
-            return BadRequest(new { message = "Wrong Password" });
+            return Ok(userRecord); // userRecord is Person stored in database
         }
-
         [HttpDelete]
         public ActionResult Delete(int id)
         {
-            return View();
+            return Ok();
         }
-
-        
     }
 }

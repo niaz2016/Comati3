@@ -1,8 +1,8 @@
 using Comati3.Models;
 using Microsoft.EntityFrameworkCore;
-using Comati3.Services;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel;
+using Microsoft.AspNetCore.Authentication.Cookies;
 namespace Comati3
 {
     public class Program
@@ -10,27 +10,37 @@ namespace Comati3
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            // Add services to the container.
+
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-            builder.Services.AddScoped<Cookies>(); //instance of dealing with cookies, Cookies file created by user
+            //builder.Services.AddScoped<Cookies>(); //instance of dealing with cookies, Cookies file created by user
             builder.Services.AddScoped<PasswordHasher<object>>(); //instance of hashing password, MS's Identity class used.
             // Configure the DbContext
             builder.Services.AddDbContext<ComatiContext>(options =>
                 options.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
 
             // Add CORS
+            
             builder.Services.AddCors(options =>
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.AllowAnyOrigin()
+                    policy.WithOrigins("https://localhost:4200", "http://localhost:81")
                           .AllowAnyMethod()
+                          .AllowCredentials()
                           .AllowAnyHeader();
                 });
             });
-            
+            /*builder.WebHost.ConfigureKestrel(serverOptions =>
+            {
+                //serverOptions.Listen(System.Net.IPAddress.Any, 5000);
+                serverOptions.Listen(System.Net.IPAddress.Any, 5000, listenOptions =>
+            {
+                listenOptions.UseHttps();
+            });
+
+            });*/
             
             var app = builder.Build();
 
@@ -47,7 +57,8 @@ namespace Comati3
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseStaticFiles();
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             // Enable Authentication and Authorization middleware

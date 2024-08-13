@@ -3,9 +3,9 @@ using Comati3.Models;
 using Comati3.DTOs;
 using Microsoft.AspNetCore.Authorization;
 
+
 namespace Comati3.Controllers
-{
-    
+{    
     [ApiController]
     [Route("api/[controller]")]
     public class PersonController : ControllerBase
