@@ -41,7 +41,7 @@ namespace Comati3.Controllers
                 TotalMembers = comati.Members != null ? comati.Members.Where(c => c.IsDeleted == false).Count() : 0,
                 TotalComati = comati.Members.Where(m => m.IsDeleted == false).Sum(a => a.Amount),
                 TotalCollected = comati.Payments?.Where(p => p.PaymentDate.Month == DateTime.Now.Month).Sum(a => a.Amount) ?? 0,
-                Defaulters = comati.Members.Select(member => new DefaulterDTO
+                Defaulters = comati.Members.Where(m=>m.IsDeleted==false).Select(member => new DefaulterDTO
                 {
                     MemberId = member.Id,
                     ComatiId = member.ComatiId,
@@ -51,8 +51,7 @@ namespace Comati3.Controllers
                     Address = member.Person.Address,
                     Remarks = member.Remarks,
                     IsNotPaid = (bool?)!(member.ComatiPayments?.Any() == true &&
-                   member.ComatiPayments.OrderBy(y => y.PaymentDate)
-                                       .LastOrDefault()?.PaymentDate.Month >= DateTime.Now.Month) ?? true
+                   member.ComatiPayments.OrderBy(y => y.PaymentDate).LastOrDefault()?.PaymentDate.Month >= DateTime.Now.Month) ?? true
                 }).Where(y => y.IsNotPaid).ToList(),
             });
             return comaties;

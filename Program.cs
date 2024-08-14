@@ -41,7 +41,7 @@ namespace Comati3
             });
 
             });*/
-            
+
             var app = builder.Build();
 
             // Apply migrations at startup
