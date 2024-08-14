@@ -45,6 +45,7 @@ namespace Comati3.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginUser([FromQuery] LoginDTO user)
         {
+            
             var userRecord =  _comatiContext.Users.Where(p => p.Phone == user.Phone).Select(n => new UserDTO
             {
                 Id = n.Id,
