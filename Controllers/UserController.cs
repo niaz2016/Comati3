@@ -45,7 +45,7 @@ namespace Comati3.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginUser([FromQuery] LoginDTO user)
         {
-            string tempPass = "AQAAAAIAAYagAAAAEIR+xxlxfzjQAIsWZa/3hKtzf42cFr7K4ajJ5WujswZD/I6ffSE+pB1tN5IUcuISfw==";
+            
             var userRecord =  _comatiContext.Users.Where(p => p.Phone == user.Phone).Select(n => new UserDTO
             {
                 Id = n.Id,
@@ -54,12 +54,12 @@ namespace Comati3.Controllers
                 Password = n.Password!,
                 Address = n.Address,
                 Mgr = n.Mgr,
-            });
+            }).FirstOrDefault();
             if (userRecord == null)
             {
                 return BadRequest(new { message = "No such phone is registered" });
             }
-            var result = _passwordHasher.VerifyHashedPassword(user.Phone, tempPass, user.Password);
+            var result = _passwordHasher.VerifyHashedPassword(user.Phone, userRecord.Password, user.Password);
             if (result != PasswordVerificationResult.Success)
             {
                 return BadRequest(new { message = "Wrong Password" });
@@ -68,9 +68,8 @@ namespace Comati3.Controllers
             {
                 var cookieOptions = new CookieOptions
                 {
-                    IsEssential = true,
                     Path = "/",
-                    HttpOnly = true,  // Prevents JavaScript from accessing the cookie (security)
+                    HttpOnly = false,  // Prevents JavaScript from accessing the cookie (security)
                     Secure = true,    // Use only HTTPS
                     SameSite = SameSiteMode.None,
                     Expires = DateTime.UtcNow.AddDays(1)
