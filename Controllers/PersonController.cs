@@ -62,6 +62,7 @@ namespace Comati3.Controllers
         {
             PersonPostDTO p = _comatiContext.Persons.Where(p => p.Id == id).Select(n => new PersonPostDTO
             {
+                Id = n.Id,
                 Name = n.Name,
                 Phone = n.Phone,
                 Address = n.Address,

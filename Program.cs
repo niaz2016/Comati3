@@ -1,8 +1,6 @@
 using Comati3.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
-using System.ComponentModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
 namespace Comati3
 {
     public class Program
