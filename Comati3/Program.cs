@@ -16,7 +16,7 @@ namespace Comati3
             builder.Services.AddScoped<PasswordHasher<object>>(); //instance of hashing password, MS's Identity class used.
             // Configure the DbContext
             builder.Services.AddDbContext<ComatiContext>(options =>
-                options.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=L-v11wK8XyIadp4g;"));
+                options.UseMySQL("Server=localhost;Database=comati;Uid=root;Pwd=3KE5OhJe7P5Sk1c1dd"));
 
             // Add CORS
             
