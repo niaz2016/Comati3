@@ -24,7 +24,7 @@ namespace Comati3
             {
                 options.AddPolicy("AllowAll", policy =>
                 {
-                    policy.WithOrigins("https://localhost:4200", "https://localhost:81")
+                    policy.WithOrigins("https://comati.tekmobile.online")
                           .AllowAnyMethod()
                           .AllowCredentials()
                           .AllowAnyHeader();
