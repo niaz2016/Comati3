@@ -72,7 +72,8 @@ namespace Comati3.Controllers
                     HttpOnly = false,  // Prevents JavaScript from accessing the cookie (security)
                     Secure = true,    // Use only HTTPS
                     SameSite = SameSiteMode.None,
-                    Expires = DateTime.UtcNow.AddDays(1)
+                    Expires = DateTime.UtcNow.AddDays(2),
+                    MaxAge = TimeSpan.FromDays(2),
                 };
                 var userJson = JsonSerializer.Serialize(userRecord);
                 Response.Cookies.Append("User", userJson, cookieOptions);
